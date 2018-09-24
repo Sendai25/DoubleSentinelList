@@ -1,0 +1,6 @@
+﻿  Double_sentinel_list_driver.cpp
+c:\dev\ece250\p1\ece250.h(503): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+c:\dev\ece250\p1\ece250.h(542): warning C4290: C++ exception specification ignored except to indicate a function is not __declspec(nothrow)
+  test.cpp
+  Generating Code...
+  p1.vcxproj -> C:\dev\ECE250\p1\Debug\p1.exe
