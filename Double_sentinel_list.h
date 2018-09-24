@@ -1,9 +1,10 @@
 /*****************************************
- * UW User ID:  uwuserid
+ * UW User ID:  z353yang
+ * Student Name: Zhicong Yang
  * Submitted for ECE 250
  * Department of Electrical and Computer Engineering
  * University of Waterloo
- * Calender Term of Submission:  (Winter|Spring|Fall) 20NN
+ * Calender Term of Submission:  Fall 2018
  *
  * By submitting this file, I affirm that
  * I am the author of all modifications to
@@ -86,38 +87,32 @@ class Double_sentinel_list {
 template <typename Type>
 Double_sentinel_list<Type>::Double_sentinel_list():
 // Updated the initialization list here
-list_head( nullptr ),
-list_tail( nullptr ),
+list_head( new Double_node ),
+list_tail( new Double_node ),
 list_size( 0 )
 {
 	// Enter your implementation here
-	Double_node *head = new Double_node();
-	Double_node *tail = new Double_node();
-	head->previous_node = nullptr;
-	head->next_node = tail;
-	tail->previous_node = head;
-	
-	this->list_head = head;
-	this->list_tail = tail;
-	this->list_size = 0;
-	std::cout << "create!" << std::endl;
+	list_head->previous_node = nullptr;
+	list_head->next_node = list_tail;
+	list_tail->previous_node = list_head;
+	list_tail->next_node = nullptr;
 }
 
 template <typename Type>
 Double_sentinel_list<Type>::Double_sentinel_list( Double_sentinel_list<Type> const &list ):
 // Updated the initialization list here
-list_head( nullptr ),
-list_tail( nullptr ),
-list_size( 0 )
+list_head(new Double_node),
+list_tail(new Double_node),
+list_size(list.list_size)
 {
 	// Enter your implementation here
-	Double_sentinel_list *copy = new Double_sentinel_list();
-	copy->list_head->node_value = list.list_head->node_value;
-	copy->list_tail->node_value = list.list_tail->node_value;
-	copy->list_size = list.list_size;
+	//Double_sentinel_list copy = Double_sentinel_list();
+	this->list_head->node_value = list.list_head->node_value;
+	this->list_tail->node_value = list.list_tail->node_value;
+	this->list_size = list.list_size;
 	Double_node *current = list.list_head->next_node;
 	Double_node *copycurr;
-	Double_node *copyprev = copy->list_head;
+	Double_node *copyprev = this->list_head;
 	for (int i = 0; i < list.list_size; i++) {
 		copycurr = new Double_node();
 		copycurr->previous_node = copyprev;
@@ -126,18 +121,20 @@ list_size( 0 )
 		current = current->next_node;
 		copyprev = copycurr;
 	}
-	copy->list_tail->previous_node = copyprev;
-	copyprev->next_node = copy->list_tail;
+	this->list_tail->previous_node = copyprev;
+	copyprev->next_node = this->list_tail;
 }
 
 template <typename Type>
 Double_sentinel_list<Type>::Double_sentinel_list( Double_sentinel_list<Type> &&list ):
 // Updated the initialization list here
-list_head( nullptr ),
-list_tail( nullptr ),
-list_size( 0 )
+list_head(new Double_node),
+list_tail(new Double_node),
+list_size(list.list_size)
 {
 	// Enter your implementation here
+	this->swap(list);
+	list.~Double_sentinel_list();
 }
 
 template <typename Type>
@@ -145,7 +142,7 @@ Double_sentinel_list<Type>::~Double_sentinel_list() {
 	// Enter your implementation here
 	Double_node *current = this->list_head;
 	Double_node *temp = nullptr;
-	while (current->next_node != nullptr) {
+	while (current != nullptr) {
 		temp = current->next_node;
 		delete current;
 		current = temp;
@@ -168,50 +165,68 @@ bool Double_sentinel_list<Type>::empty() const {
 template <typename Type>
 Type Double_sentinel_list<Type>::front() const {
 	// Enter your implementation here
-	
-	return Type(); // This returns a default value of Type
+	if (this->list_size == 0)
+		throw overflow();
+	return this->list_head->next_node->node_value;
+	//return Type(); // This returns a default value of Type
 }
 
 template <typename Type>
 Type Double_sentinel_list<Type>::back() const {
 	// Enter your implementation here
-	return Type(); // This returns a default value of Type
+	if (this->list_size == 0)
+		throw overflow();
+	return this->list_tail->previous_node->node_value;
+	//return Type(); // This returns a default value of Type
 }
 
 template <typename Type>
 typename Double_sentinel_list<Type>::Double_node *Double_sentinel_list<Type>::begin() const {
 	// Enter your implementation here
-	return nullptr;
+	return this->list_head->next_node;
 }
 
 template <typename Type>
 typename Double_sentinel_list<Type>::Double_node *Double_sentinel_list<Type>::end() const {
 	// Enter your implementation here
-	return nullptr;
+	return this->list_tail;
 }
 
 template <typename Type>
 typename Double_sentinel_list<Type>::Double_node *Double_sentinel_list<Type>::rbegin() const {
 	// Enter your implementation here
-	return nullptr;
+	return this->list_tail->previous_node;
 }
 
 template <typename Type>
 typename Double_sentinel_list<Type>::Double_node *Double_sentinel_list<Type>::rend() const {
 	// Enter your implementation here
-	return nullptr;
+	return this->list_head;
 }
 
 template <typename Type>
 typename Double_sentinel_list<Type>::Double_node *Double_sentinel_list<Type>::find( Type const &obj ) const {
 	// Enter your implementation here
-	return nullptr;
+	Double_node *current = this->list_head;
+	while (current != nullptr) {
+		if (current->node_value == obj)
+			return current;
+		current = current->next_node;
+	}
+	return this->end();
 }
 
 template <typename Type>
 int Double_sentinel_list<Type>::count( Type const &obj ) const {
 	// Enter your implementation here
-	return 0;
+	Double_node *current = this->list_head;
+	int same = 0;
+	while (current != nullptr) {
+		if (current->node_value == obj)
+			same++;
+		current = current->next_node;
+	}
+	return same;
 }
 
 template <typename Type>
@@ -243,27 +258,73 @@ Double_sentinel_list<Type> &Double_sentinel_list<Type>::operator=( Double_sentin
 template <typename Type>
 void Double_sentinel_list<Type>::push_front( Type const &obj ) {
 	// Enter your implementation here
+	Double_node *second = this->list_head->next_node;
+	Double_node *new_node = new Double_node();
+	new_node->previous_node = this->list_head;
+	new_node->next_node = second;
+	new_node->node_value = obj;
+	this->list_head->next_node = new_node;
+	second->previous_node = new_node;
+	this->list_size++;
 }
 
 template <typename Type>
 void Double_sentinel_list<Type>::push_back( Type const &obj ) {
 	// Enter your implementation here
+	Double_node *second = this->list_tail->previous_node;
+	Double_node *new_node = new Double_node();
+	new_node->previous_node = second;
+	new_node->next_node = this->list_tail;
+	new_node->node_value = obj;
+	this->list_tail->previous_node = new_node;
+	second->next_node = new_node;
+	this->list_size++;
 }
 
 template <typename Type>
 void Double_sentinel_list<Type>::pop_front() {
 	// Enter your implementation here
+	if (this->list_size == 0)
+		throw overflow();
+	Double_node *temp = this->list_head->next_node;
+	this->list_head->next_node = temp->next_node;
+	temp->next_node->previous_node = this->list_head;
+	this->list_size--;
+	delete temp;
 }
 
 template <typename Type>
 void Double_sentinel_list<Type>::pop_back() {
 	// Enter your implementation here
+	if (this->list_size == 0)
+		throw overflow();
+	Double_node *temp = this->list_tail->previous_node;
+	this->list_tail->previous_node = temp->previous_node;
+	temp->previous_node->next_node = this->list_tail;
+	this->list_size--;
+	delete temp;
 }
 
 template <typename Type>
 int Double_sentinel_list<Type>::erase( Type const &obj ) {
 	// Enter your implementation here
-	return 0;
+	int num = 0;
+	Double_node *current = this->list_head->next_node;
+	Double_node *temp;
+	while (current->next_node != nullptr) {
+		if (current->node_value == obj) {
+			current->previous_node->next_node = current->next_node;
+			current->next_node->previous_node = current->previous_node;
+			temp = current;
+			current = current->next_node;
+			this->list_size--;
+			num++;
+			delete temp;
+		}
+		else 
+			current = current->next_node;
+	}
+	return num;
 }
 
 template <typename Type>
@@ -282,19 +343,20 @@ next_node( nullptr )
 template <typename Type>
 Type Double_sentinel_list<Type>::Double_node::value() const {
 	// Enter your implementation here
-	return Type(); // This returns a default value of Type
+	return this->node_value;
+	//return Type(); // This returns a default value of Type
 }
 
 template <typename Type>
 typename Double_sentinel_list<Type>::Double_node *Double_sentinel_list<Type>::Double_node::previous() const {
 	// Enter your implementation here
-	return nullptr;
+	return this->previous_node;
 }
 
 template <typename Type>
 typename Double_sentinel_list<Type>::Double_node *Double_sentinel_list<Type>::Double_node::next() const {
 	// Enter your implementation here
-	return nullptr;
+	return this->next_node;
 }
 
 /////////////////////////////////////////////////////////////////////////

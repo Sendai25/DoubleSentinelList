@@ -26,9 +26,6 @@
     <ClInclude Include="Double_node_tester.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Double_sentinel_list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Double_sentinel_list_tester.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -41,5 +38,11 @@
     <ClInclude Include="Tester.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Double_sentinel_list.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="step.int.in.txt" />
   </ItemGroup>
 </Project>

@@ -21,7 +21,7 @@
 #include "Double_sentinel_list_tester.h"
 #include "Double_node_tester.h"
 
-int main1( int argc, char *argv[] ) {
+int main( int argc, char *argv[] ) {
 	if ( argc > 2 ) {
 		std::cerr << "Expecting at most one command-line argument" << std::endl;
 
@@ -45,6 +45,6 @@ int main1( int argc, char *argv[] ) {
 	}
 
 	std::cout << "Finishing Test Run" << std::endl;
-
+	system("pause");
 	return 0;
 }

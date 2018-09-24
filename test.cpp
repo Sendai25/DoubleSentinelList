@@ -4,8 +4,8 @@
 // Every C++ Project in Visual Studio and other IDEs can only have one file with a main() function.
 // Thus, if you want this to compile, you must change the name to 'main()' and change the name of
 // the 'main()' function in the driver to something else.
-int main() {
-	/*Double_sentinel_list<int> list;
+int main2() {
+	Double_sentinel_list<int> list;
 
 	std::cout << "The list should be empty (1): " << list.empty() << std::endl;
 	std::cout << "The size should be 0: " << list.size() << std::endl;
@@ -33,7 +33,7 @@ int main() {
 	std::cout << "The next pointer of begin should be the null pointer: " << list.begin()->next() << std::endl;
 	std::cout << "The begin should equal end: " << (list.begin() == list.end()) << std::endl;
 
-	system("pause");*/
+	system("pause");
 
 	return 0;
 }
